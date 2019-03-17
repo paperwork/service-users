@@ -28,6 +28,7 @@ defmodule Paperwork.MixProject do
       {:mongodb, "~> 0.4.7"},
       {:poolboy, "~> 1.5"},
       {:bcrypt_elixir, "~> 2.0"},
+      {:distillery, "~> 2.0"},
       {:exsync, "~> 0.2", only: :dev}
     ]
   end
