@@ -20,33 +20,31 @@ defmodule Paperwork do
     mount Paperwork.Registration
   end
 
-  # rescue_from Unauthorized, as: e do
-  #   IO.inspect(e)
-
-  #   conn
-  #   |> put_status(401)
-  #   |> text("Unauthorized")
-  # end
-
-  rescue_from [MatchError, RuntimeError], with: :custom_error
-  rescue_from Maru.Exceptions.InvalidFormat, as: e do
+  rescue_from Unauthorized, as: e do
     IO.inspect(e)
 
     conn
-    |> response_json(%{badrequest: 0}, {:badrequest, %{param: e.param, reason: e.reason}})
+    |> resp({:unauthorized, %{status: 1, content: e}})
+  end
+
+  rescue_from [MatchError, RuntimeError], as: e do
+    IO.inspect e
+
+    conn
+    |> resp({:error, %{status: 1, content: e}})
+  end
+
+  rescue_from Maru.Exceptions.InvalidFormat, as: e do
+    IO.inspect e
+
+    conn
+    |> resp({:badrequest, %{status: 1, content: %{param: e.param, reason: e.reason}}})
   end
 
   rescue_from :all, as: e do
     IO.inspect e
 
     conn
-    |> put_status(Plug.Exception.status(e))
-    |> text("Server Error")
-  end
-
-  defp custom_error(conn, exception) do
-    conn
-    |> put_status(500)
-    |> text(exception.message)
+    |> resp({:error, %{status: 1, content: e}})
   end
 end

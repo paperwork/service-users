@@ -12,6 +12,7 @@ defmodule Paperwork.Collections.User do
       first_name: String.t(),
       last_name: String.t()
     },
+    role: String.t(),
     created_at: DateTime.t(),
     updated_at: DateTime.t(),
     deleted_at: DateTime.t() | nil
@@ -24,6 +25,7 @@ defmodule Paperwork.Collections.User do
       first_name: "",
       last_name: ""
     },
+    role: "user",
     created_at: DateTime.utc_now(),
     updated_at: DateTime.utc_now(),
     deleted_at: nil
@@ -38,12 +40,11 @@ defmodule Paperwork.Collections.User do
 
   @spec show(id :: BSON.ObjectId.t) :: {:ok, %__MODULE__{}} | {:notfound, nil}
   def show(%BSON.ObjectId{} = id) do
-    collection_find(%__MODULE__{id: id}, :id)
-    |> strip_privates
+    show(%__MODULE__{:id => id})
   end
 
   @spec show(model :: __MODULE__.t) :: {:ok, %__MODULE__{}} | {:notfound, nil}
-  def show(%__MODULE__{} = model) do
+  def show(%__MODULE__{:id => _} = model) do
     collection_find(model, :id)
     |> strip_privates
   end

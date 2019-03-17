@@ -4,6 +4,6 @@ defmodule Auth.Plug.ErrorHandler do
 
   def auth_error(conn, {type, _reason}, _opts) do
     conn
-    |> response_json(%{unauthorized: 2}, {:unauthorized, %{message: to_string(type)}})
+    |> resp({:unauthorized, %{status: 1, content: %{error: to_string(type)}}})
   end
 end

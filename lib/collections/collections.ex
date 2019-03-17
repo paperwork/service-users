@@ -33,7 +33,7 @@ defmodule Paperwork.Collections do
       def keys_to_atoms(value), do: value
 
       @spec found_or_nil(result :: Map.t) :: {:ok, %__MODULE__{}}
-      defp found_or_nil(%{"_id" => _} = result) do
+      defp found_or_nil(%{"_id" => _id} = result) do
         {:ok, (struct(__MODULE__, keys_to_atoms(result)) |> Map.put(:id, result["_id"]))}
       end
 

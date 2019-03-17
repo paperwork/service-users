@@ -16,7 +16,11 @@ config :paperwork, Auth.Guardian,
     default: [:read_users, :write_users]
   }
 
-config :paperwork, Auth.Plug.AccessPipeline,
+config :paperwork, Auth.Plug.AccessPipeline.Authenticated,
+  module: Auth.Guardian,
+  error_handler: Auth.Plug.ErrorHandler
+
+config :paperwork, Auth.Plug.AccessPipeline.Unauthenticated,
   module: Auth.Guardian,
   error_handler: Auth.Plug.ErrorHandler
 

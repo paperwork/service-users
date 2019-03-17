@@ -10,7 +10,10 @@ defmodule Auth.Guardian do
   end
 
   def resource_from_claims(%{"sub" => sub}) do
-    Paperwork.Collections.User.show(BSON.ObjectId.decode!(sub))
+    case BSON.ObjectId.decode!(sub) |> Paperwork.Collections.User.show do
+      {:ok, user} -> {:ok, Map.from_struct(user)}
+      other -> other
+    end
   end
 
   def resource_from_claims(_claims) do

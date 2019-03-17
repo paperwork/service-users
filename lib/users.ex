@@ -3,21 +3,21 @@ defmodule Paperwork.Users do
   use Paperwork.Helpers.Response
 
   pipeline do
-    plug Auth.Plug.AccessPipeline
+    plug Auth.Plug.AccessPipeline.Authenticated
   end
 
   namespace :users do
     get do
       {:ok, users} = Paperwork.Collections.User.list()
       conn
-      |> response_json(%{ok: 0}, {:ok, users})
+      |> resp({:ok, users})
     end
 
     route_param :id do
       get do
-        {:ok, user} = Paperwork.Collections.User.show(BSON.ObjectId.decode!(params[:id]))
+        {:ok, user} = BSON.ObjectId.decode!(params[:id]) |> Paperwork.Collections.User.show
         conn
-        |> response_json(%{ok: 0}, {:ok, user})
+        |> resp({:ok, user})
       end
 
       desc "Update User"
@@ -30,9 +30,19 @@ defmodule Paperwork.Users do
         end
       end
       post do
-        {:ok, user} = (struct(Paperwork.Collections.User, params) |> Map.put(:id, BSON.ObjectId.decode!(params[:id])) |> Paperwork.Collections.User.update)
+        session_user = Auth.Guardian.Plug.current_resource(conn)
+        IO.inspect session_user[:id]
+        update_user = params
+        |> Map.put(:id, BSON.ObjectId.decode!(params[:id]))
+        |> Map.put(:updated_at, DateTime.utc_now())
+
+        response = cond do
+          session_user[:id] != update_user[:id] and session_user[:role] != :role_admin -> {:unauthorized, %{status: 0, content: %{error: "Not authorized to update other users"}}}
+          true -> struct(Paperwork.Collections.User, update_user) |> Paperwork.Collections.User.update
+        end
+
         conn
-        |> response_json(%{ok: 0}, {:ok, user})
+        |> resp(response)
       end
     end
   end
