@@ -1,5 +1,5 @@
 defmodule Auth.Guardian do
-  use Guardian, otp_app: :paperwork
+  use Guardian, otp_app: :paperwork_service_users
 
   def subject_for_token(%{id: id}, _claims) do
     {:ok, BSON.ObjectId.encode!(id)}

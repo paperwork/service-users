@@ -1,5 +1,5 @@
 defmodule Auth.Plug.AccessPipeline.Authenticated do
-  use Guardian.Plug.Pipeline, otp_app: :paperwork
+  use Guardian.Plug.Pipeline, otp_app: :paperwork_service_users
 
   plug Guardian.Plug.VerifyHeader, claims: %{"typ" => "access"}
   plug Guardian.Plug.EnsureAuthenticated
@@ -7,7 +7,7 @@ defmodule Auth.Plug.AccessPipeline.Authenticated do
 end
 
 defmodule Auth.Plug.AccessPipeline.Unauthenticated do
-  use Guardian.Plug.Pipeline, otp_app: :paperwork
+  use Guardian.Plug.Pipeline, otp_app: :paperwork_service_users
 
   plug Guardian.Plug.EnsureNotAuthenticated
 end
