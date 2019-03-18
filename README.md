@@ -1,5 +1,7 @@
 service-users
 =============
+[<img src="https://img.shields.io/docker/cloud/build/paperwork/service-users.svg?style=for-the-badge"/>](https://hub.docker.com/r/paperwork/service-users)
+
 Paperwork Users Service
 
 ## Prerequisites
