@@ -3,7 +3,6 @@ defmodule Paperwork.Registration do
   use Paperwork.Helpers.Response
 
   pipeline do
-    plug Auth.Plug.AccessPipeline.Unauthenticated
   end
 
   namespace :registration do
@@ -20,13 +19,18 @@ defmodule Paperwork.Registration do
       new_user = params
       |> Map.put("role", :role_user)
 
-      {:ok, created_user} = struct(Paperwork.Collections.User, new_user)
-        |> Paperwork.Collections.User.create()
-      {:ok, jwt, _full_claims} = Auth.Guardian.encode_and_sign(created_user, %{})
+      with \
+        {:ok, created_user} <- struct(Paperwork.Collections.User, new_user) |> Paperwork.Collections.User.create(),
+        {:ok, jwt, _claims} <- Paperwork.Auth.Session.create(created_user) do
+          conn
+          |> put_resp_header("Authorization", "Bearer #{jwt}")
+          |> resp({:ok, %{token: jwt, user: created_user}})
+      else
+        _ ->
+          conn
+          |> resp({:error, %{status: 1, content: %{error: "Something bad happened. Please try again."}}})
+      end
 
-      conn
-      |> put_resp_header("Authorization", "Bearer #{jwt}")
-      |> resp({:ok, %{token: jwt, user: created_user}})
     end
   end
 end

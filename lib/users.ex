@@ -3,7 +3,7 @@ defmodule Paperwork.Users do
   use Paperwork.Helpers.Response
 
   pipeline do
-    plug Auth.Plug.AccessPipeline.Authenticated
+    plug Paperwork.Auth.Plug.SessionLoader
   end
 
   namespace :users do
@@ -30,10 +30,10 @@ defmodule Paperwork.Users do
         end
       end
       post do
-        session_user = Auth.Guardian.Plug.current_resource(conn)
-        IO.inspect session_user[:id]
+        session_user = conn |> Paperwork.Auth.Session.get
+        IO.inspect session_user
         update_user = params
-        |> Map.put(:id, BSON.ObjectId.decode!(params[:id]))
+        |> Map.put(:id, params[:id])
         |> Map.put(:updated_at, DateTime.utc_now())
 
         response = cond do

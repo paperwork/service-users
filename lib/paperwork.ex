@@ -21,10 +21,8 @@ defmodule Paperwork do
   end
 
   rescue_from Unauthorized, as: e do
-    IO.inspect(e)
-
     conn
-    |> resp({:unauthorized, %{status: 1, content: e}})
+    |> resp({:unauthorized, %{status: 1, content: %{message: e.message}}})
   end
 
   rescue_from [MatchError, RuntimeError], as: e do
