@@ -49,6 +49,18 @@ defmodule Paperwork.Collections.User do
     |> strip_privates
   end
 
+  @spec authenticate(model :: __MODULE__.t) :: {:ok, %__MODULE__{}} | {:nok, nil}
+  def authenticate(%__MODULE__{:email => email, :password => password} = model) do
+    with \
+      {:ok, found_user} <- collection_find(model, :email),
+      true <- Bcrypt.verify_pass(password, Map.get(found_user, :password)) do
+        {:ok, found_user |> strip_privates }
+    else
+      _ ->
+        {:nok, nil}
+    end
+  end
+
   @spec list() :: {:ok, [%__MODULE__{}]} | {:notfound, nil}
   def list() do
     %{}
