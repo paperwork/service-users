@@ -18,6 +18,7 @@ defmodule Paperwork do
 
     mount Paperwork.Users
     mount Paperwork.Registration
+    mount Paperwork.Login
   end
 
   rescue_from Unauthorized, as: e do
