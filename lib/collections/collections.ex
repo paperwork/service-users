@@ -76,6 +76,12 @@ defmodule Paperwork.Collections do
         {:ok, (models |> Enum.map(fn model -> Map.drop(model, @privates) end))}
       end
 
+      @spec strip_privates(model :: %__MODULE__{}) :: {:ok, %__MODULE__{}}
+      def strip_privates(%__MODULE__{} = model) do
+        {:ok, stripped_model} = strip_privates({:ok, model})
+        stripped_model
+      end
+
       @spec strip_privates({:notfound, nil}) :: {:notfound, nil}
       def strip_privates({:notfound, nil}) do
         {:notfound, nil}
