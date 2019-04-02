@@ -1,4 +1,4 @@
-defmodule Paperwork.MixProject do
+defmodule Paperwork.Users.MixProject do
   use Mix.Project
 
   def project do
@@ -20,6 +20,8 @@ defmodule Paperwork.MixProject do
 
   defp deps do
     [
+      # {:paperwork, path: "../paperwork.ex"},
+      {:paperwork, git: "https://github.com/paperwork/paperwork.ex.git"},
       {:maru, "~> 0.14.0-pre.1"},
       {:plug_cowboy, "~> 2.0"},
       {:jason, "~> 1.1"},
