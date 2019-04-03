@@ -22,6 +22,7 @@ defmodule Paperwork.Users.MixProject do
         [
             # {:paperwork, path: "../paperwork.ex"},
             {:paperwork, git: "https://github.com/paperwork/paperwork.ex.git"},
+            {:confex, "~> 3.4"},
             {:maru, "~> 0.14.0-pre.1"},
             {:plug_cowboy, "~> 2.0"},
             {:jason, "~> 1.1"},
