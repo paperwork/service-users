@@ -11,7 +11,8 @@ config :paperwork_service_users, Paperwork.Server,
     adapter: Plug.Cowboy,
     plug: Paperwork,
     scheme: :http,
-    port: 8880
+    ip: {0,0,0,0},
+    port: {:system, :integer, "PORT", 8881}
 
 config :paperwork_service_users,
     maru_servers: [Paperwork.Server]
