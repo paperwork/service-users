@@ -17,5 +17,10 @@ config :paperwork_service_users, Paperwork.Server,
 config :paperwork_service_users,
     maru_servers: [Paperwork.Server]
 
+config :paperwork, :internal,
+    configs: {:system, :string, "INTERNAL_RESOURCE_CONFIGS", "http://localhost:8880/internal/configs"},
+    users:   {:system, :string, "INTERNAL_RESOURCE_USERS",   "http://localhost:8881/internal/users"},
+    notes:   {:system, :string, "INTERNAL_RESOURCE_NOTES",   "http://localhost:8882/internal/notes"}
+
 config :logger,
     backends: [:console]
