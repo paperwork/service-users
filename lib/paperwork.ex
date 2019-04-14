@@ -16,6 +16,7 @@ defmodule Paperwork do
             json(conn, %{hello: :world})
         end
 
+        mount Paperwork.Internal.Users
         mount Paperwork.Users
         mount Paperwork.Registration
         mount Paperwork.Login
