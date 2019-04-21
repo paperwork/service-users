@@ -1,7 +1,3 @@
-defmodule Paperwork.Server do
-    use Maru.Server, otp_app: :paperwork_service_users
-
-    def init(_type, opts) do
-        Confex.Resolver.resolve(opts)
-    end
+defmodule Paperwork.Users.Server do
+    use Paperwork.Server
 end

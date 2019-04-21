@@ -1,49 +1,60 @@
 defmodule Paperwork.Users do
-    use Paperwork.Server
+    use Paperwork
+    use Paperwork.Users.Server
     use Paperwork.Helpers.Response
 
-    pipeline do
-        plug Paperwork.Auth.Plug.SessionLoader
-    end
-
-    namespace :users do
+    resources do
         get do
-            {:ok, users} = Paperwork.Collections.User.list()
-            conn
-            |> resp({:ok, users})
+            json(conn, %{service: :paperwork_service_users})
         end
 
-        route_param :id do
-            get do
-                {:ok, user} = BSON.ObjectId.decode!(params[:id]) |> Paperwork.Collections.User.show
-                conn
-                |> resp({:ok, user})
-            end
-
-            desc "Update User"
-            params do
-                optional :email, type: String
-                optional :password, type: String
-                group :name, type: Map do
-                    optional :first_name, type: String
-                    optional :last_name, type: String
-                end
-            end
-            post do
-                session_user = conn |> Paperwork.Auth.Session.get
-                IO.inspect session_user
-                update_user = params
-                |> Map.put(:id, params[:id])
-                |> Map.put(:updated_at, DateTime.utc_now())
-
-                response = cond do
-                    session_user[:id] != update_user[:id] and session_user[:role] != :role_admin -> {:unauthorized, %{status: 0, content: %{error: "Not authorized to update other users"}}}
-                    true -> struct(Paperwork.Collections.User, update_user) |> Paperwork.Collections.User.update
-                end
-
-                conn
-                |> resp(response)
-            end
-        end
+        mount Paperwork.Users.Endpoints.Internal.Users
+        mount Paperwork.Users.Endpoints.Users
+        mount Paperwork.Users.Endpoints.Registration
+        mount Paperwork.Users.Endpoints.Login
     end
+
+    # TODO: Try to get rid of all this and define it within Paperwork.ex
+    before do
+        plug Plug.Logger
+        plug Corsica, origins: "*"
+        plug Plug.Parsers,
+            pass: ["*/*"],
+            json_decoder: Jason,
+            parsers: [:urlencoded, :json, :multipart]
+    end
+
+    rescue_from Unauthorized, as: e do
+        conn
+        |> resp({:unauthorized, %{status: 1, content: %{message: e.message}}})
+    end
+
+    rescue_from [MatchError, RuntimeError], as: e do
+        IO.inspect e
+
+        conn
+        |> resp({:error, %{status: 1, content: e}})
+    end
+
+    rescue_from Maru.Exceptions.InvalidFormat, as: e do
+        IO.inspect e
+
+        conn
+        |> resp({:badrequest, %{status: 1, content: %{param: e.param, reason: e.reason}}})
+    end
+
+    rescue_from Maru.Exceptions.NotFound, as: e do
+        IO.inspect e
+
+        conn
+        |> resp({:notfound, %{status: 1, content: %{method: e.method, route: e.path_info}}})
+    end
+
+    rescue_from :all, as: e do
+        IO.inspect e
+
+        conn
+        |> resp({:error, %{status: 1, content: e}})
+    end
+
 end

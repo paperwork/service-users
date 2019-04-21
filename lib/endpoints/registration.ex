@@ -1,5 +1,5 @@
-defmodule Paperwork.Registration do
-    use Paperwork.Server
+defmodule Paperwork.Users.Endpoints.Registration do
+    use Paperwork.Users.Server
     use Paperwork.Helpers.Response
 
     pipeline do

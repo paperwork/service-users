@@ -1,5 +1,5 @@
-defmodule Paperwork.Internal.Users do
-    use Paperwork.Server
+defmodule Paperwork.Users.Endpoints.Internal.Users do
+    use Paperwork.Users.Server
     use Paperwork.Helpers.Response
 
     pipeline do
@@ -15,7 +15,7 @@ defmodule Paperwork.Internal.Users do
 
             route_param :id do
                 get do
-                    {:ok, user} = BSON.ObjectId.decode!(params[:id]) |> Paperwork.Collections.User.show
+                    {:ok, user} = params[:id] |> Paperwork.Collections.User.show
                     conn
                     |> resp({:ok, user})
                 end

@@ -1,4 +1,4 @@
-defmodule Paperwork.Application do
+defmodule Paperwork.Users.Application do
     use Application
 
     def start(_type, _args) do
@@ -10,11 +10,12 @@ defmodule Paperwork.Application do
         end
 
         children = [
-            Paperwork.Server,
+            Paperwork.Ex,
+            Paperwork.Users.Server,
             {Mongo, [name: :mongo, database: "users", pool: DBConnection.Poolboy]}
         ]
 
-        opts = [strategy: :one_for_one, name: Paperwork.Supervisor]
+        opts = [strategy: :one_for_one, name: Paperwork.Users.Supervisor]
         Supervisor.start_link(children, opts)
     end
 end

@@ -1,5 +1,6 @@
-defmodule Paperwork.Login do
-    use Paperwork.Server
+defmodule Paperwork.Users.Endpoints.Login do
+    require Logger
+    use Paperwork.Users.Server
     use Paperwork.Helpers.Response
 
     pipeline do
@@ -21,7 +22,8 @@ defmodule Paperwork.Login do
                     |> put_resp_header("Authorization", "Bearer #{jwt}")
                     |> resp({:ok, %{token: jwt, user: authenticated_user}})
             else
-                _ ->
+                other ->
+                    Logger.debug("Authentication failed: #{inspect other}")
                     conn
                     |> resp({:badrequest, %{status: 1, content: %{error: "Authentication unsuccessful."}}})
             end

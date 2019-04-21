@@ -1,6 +1,6 @@
-require Logger
-
 defmodule Paperwork.Collections.User do
+    require Logger
+
     @collection "users"
     @privates [:password]
     @enforce_keys []
@@ -32,14 +32,13 @@ defmodule Paperwork.Collections.User do
 
     use Paperwork.Collections
 
-    @spec show(email :: String.t) :: {:ok, %__MODULE__{}} | {:notfound, nil}
-    def show(email) when is_binary(email) do
-        collection_find(%__MODULE__{email: email}, :email)
-        |> strip_privates
+    @spec show(id :: BSON.ObjectId.t) :: {:ok, %__MODULE__{}} | {:notfound, nil}
+    def show(%BSON.ObjectId{} = id) when is_map(id) do
+        show(%__MODULE__{:id => id})
     end
 
-    @spec show(id :: BSON.ObjectId.t) :: {:ok, %__MODULE__{}} | {:notfound, nil}
-    def show(%BSON.ObjectId{} = id) do
+    @spec show(id :: String.t) :: {:ok, %__MODULE__{}} | {:notfound, nil}
+    def show(id) when is_binary(id) do
         show(%__MODULE__{:id => id})
     end
 
@@ -53,11 +52,11 @@ defmodule Paperwork.Collections.User do
     def authenticate(%__MODULE__{:email => _email, :password => password} = model) do
         with \
             {:ok, found_user} <- collection_find(model, :email),
-            true <- Bcrypt.verify_pass(password, Map.get(found_user, :password)) do
+            true <- Bcrypt.verify_pass(password, Map.get(found_user |> IO.inspect, :password)) do
                 {:ok, found_user |> strip_privates }
         else
-            _ ->
-                {:nok, nil}
+            other ->
+                {:nok, other}
         end
     end
 
