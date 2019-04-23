@@ -8,16 +8,30 @@ defmodule Paperwork.Users.Endpoints.Users do
 
     namespace :users do
         get do
-            {:ok, users} = Paperwork.Collections.User.list()
+            response = case conn |> Paperwork.Auth.Session.get_user_role do
+                :role_admin ->
+                    Paperwork.Collections.User.list()
+                _ ->
+                    {:unauthorized, %{status: 0, content: %{error: "Not authorized to list all users"}}}
+            end
+
             conn
-            |> resp({:ok, users})
+            |> resp(response)
         end
 
         route_param :id do
             get do
-                {:ok, user} = BSON.ObjectId.decode!(params[:id]) |> Paperwork.Collections.User.show
+                session_user_id = conn |> Paperwork.Auth.Session.get_user_id
+                session_user_role = conn |> Paperwork.Auth.Session.get_user_role
+                show_user = params
+
+                response = cond do
+                    session_user_id != show_user[:id] and session_user_role != :role_admin -> {:unauthorized, %{status: 0, content: %{error: "Not authorized to view other users"}}}
+                    true -> BSON.ObjectId.decode!(params[:id]) |> Paperwork.Collections.User.show
+                end
+
                 conn
-                |> resp({:ok, user})
+                |> resp(response)
             end
 
             desc "Update User"
@@ -30,11 +44,12 @@ defmodule Paperwork.Users.Endpoints.Users do
                 end
             end
             put do
-                session_user = conn |> Paperwork.Auth.Session.get
+                session_user_id = conn |> Paperwork.Auth.Session.get_user_id
+                session_user_role = conn |> Paperwork.Auth.Session.get_user_role
                 update_user = params
 
                 response = cond do
-                    session_user[:id] != update_user[:id] and session_user[:role] != :role_admin -> {:unauthorized, %{status: 0, content: %{error: "Not authorized to update other users"}}}
+                    session_user_id != update_user[:id] and session_user_role != :role_admin -> {:unauthorized, %{status: 0, content: %{error: "Not authorized to update other users"}}}
                     true -> struct(Paperwork.Collections.User, update_user)
                             |> Map.put(:id, params[:id])
                             |> Map.put(:updated_at, DateTime.utc_now())
