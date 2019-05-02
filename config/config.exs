@@ -4,7 +4,7 @@ config :joken,
     issuer: "Paperwork",
     hs512: [
         signer_alg: "HS512",
-        key_octet: "ru4XngBQ/uXZX4o/dTjy3KieL7OHkqeKwGH9KhClVnfpEaRcpw+rNvvSiC66dyiY"
+        key_octet: {:system, :string, "JWT_SECRET", "ru4XngBQ/uXZX4o/dTjy3KieL7OHkqeKwGH9KhClVnfpEaRcpw+rNvvSiC66dyiY"}
     ]
 
 config :paperwork_service_users, Paperwork.Users.Server,
