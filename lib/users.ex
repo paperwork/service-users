@@ -17,7 +17,11 @@ defmodule Paperwork.Users do
     # TODO: Try to get rid of all this and define it within Paperwork.ex
     before do
         plug Plug.Logger
-        plug Corsica, origins: "*"
+        plug Corsica,
+            allow_headers: :all,
+            allow_methods: :all,
+            origins: "*",
+            log: [rejected: :error, invalid: :debug, accepted: :debug]
         plug Plug.Parsers,
             pass: ["*/*"],
             json_decoder: Jason,
