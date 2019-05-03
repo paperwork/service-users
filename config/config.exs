@@ -16,6 +16,8 @@ config :paperwork, :server,
     cache_janitor_interval: 60,
     jwt_secret: {:system, :string, "JWT_SECRET", "ru4XngBQ/uXZX4o/dTjy3KieL7OHkqeKwGH9KhClVnfpEaRcpw+rNvvSiC66dyiY"}
 
+config :paperwork, :mongodb,
+    url: {:system, :string, "MONGODB_URL", "mongodb://localhost:27017/users"}
 
 config :paperwork, :internal,
     cache_ttl: 60,
