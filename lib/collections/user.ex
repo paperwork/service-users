@@ -52,7 +52,7 @@ defmodule Paperwork.Collections.User do
     def authenticate(%__MODULE__{:email => _email, :password => password} = model) do
         with \
             {:ok, found_user} <- collection_find(model, :email),
-            true <- Bcrypt.verify_pass(password, Map.get(found_user |> IO.inspect, :password)) do
+            true <- Bcrypt.verify_pass(password, Map.get(found_user, :password)) do
                 {:ok, found_user |> strip_privates }
         else
             other ->
