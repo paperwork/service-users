@@ -1,12 +1,5 @@
 use Mix.Config
 
-config :joken,
-    issuer: "Paperwork",
-    hs512: [
-        signer_alg: "HS512",
-        key_octet: {:system, :string, "JWT_SECRET", "ru4XngBQ/uXZX4o/dTjy3KieL7OHkqeKwGH9KhClVnfpEaRcpw+rNvvSiC66dyiY"}
-    ]
-
 config :paperwork_service_users, Paperwork.Users.Server,
     adapter: Plug.Cowboy,
     plug: Paperwork.Users,
@@ -20,7 +13,9 @@ config :paperwork_service_users,
 config :paperwork, :server,
     app: :paperwork_service_users,
     cache_ttl_default: 86_400,
-    cache_janitor_interval: 60
+    cache_janitor_interval: 60,
+    jwt_secret: {:system, :string, "JWT_SECRET", "ru4XngBQ/uXZX4o/dTjy3KieL7OHkqeKwGH9KhClVnfpEaRcpw+rNvvSiC66dyiY"}
+
 
 config :paperwork, :internal,
     cache_ttl: 60,
