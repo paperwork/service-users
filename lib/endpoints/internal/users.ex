@@ -15,7 +15,8 @@ defmodule Paperwork.Users.Endpoints.Internal.Users do
 
             route_param :id do
                 get do
-                    {:ok, user} = params[:id] |> Paperwork.Collections.User.show
+                    id = Paperwork.Id.from_gid(params[:id])
+                    {:ok, user} = id |> Paperwork.Collections.User.show
                     conn
                     |> resp({:ok, user})
                 end

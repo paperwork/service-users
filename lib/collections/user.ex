@@ -33,13 +33,18 @@ defmodule Paperwork.Collections.User do
     use Paperwork.Collections
 
     @spec show(id :: BSON.ObjectId.t) :: {:ok, %__MODULE__{}} | {:notfound, nil}
-    def show(%BSON.ObjectId{} = id) when is_map(id) do
+    def show(%BSON.ObjectId{value: _} = id) when is_map(id) do
         show(%__MODULE__{:id => id})
+    end
+
+    @spec show(id :: Paperwork.Id.t) :: {:ok, %__MODULE__{}} | {:notfound, nil}
+    def show(%Paperwork.Id{gid: gid, id: resource_id, system_id: system_id} = id) when is_map(id) and is_binary(gid) and is_binary(resource_id) do
+        show(%__MODULE__{:id => resource_id |> BSON.ObjectId.decode!()})
     end
 
     @spec show(id :: String.t) :: {:ok, %__MODULE__{}} | {:notfound, nil}
     def show(id) when is_binary(id) do
-        show(%__MODULE__{:id => id})
+        show(%__MODULE__{:id => id |> BSON.ObjectId.decode!()})
     end
 
     @spec show(model :: __MODULE__.t) :: {:ok, %__MODULE__{}} | {:notfound, nil}
