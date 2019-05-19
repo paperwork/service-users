@@ -25,7 +25,7 @@ defmodule Paperwork.Collections.User do
             first_name: "",
             last_name: ""
         },
-        role: "user",
+        role: "",
         created_at: DateTime.utc_now(),
         updated_at: DateTime.utc_now(),
         deleted_at: nil
