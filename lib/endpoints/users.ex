@@ -15,7 +15,7 @@ defmodule Paperwork.Users.Endpoints.Users do
                     {:ok, users} = Paperwork.Collections.User.list()
                     {:ok,
                         users
-                        |> Enum.map(fn user -> struct(Paperwork.Collections.UserProfile, Map.take(user, [:id, :email, :name])) end)
+                        |> Enum.map(fn user -> struct(Paperwork.Collections.UserProfile, Map.take(user, Paperwork.Collections.UserProfile.fields())) end)
                     }
             end
 
@@ -38,7 +38,7 @@ defmodule Paperwork.Users.Endpoints.Users do
                 response = cond do
                     session_user_id != show_user_id and session_user_role != :role_admin ->
                         {:ok, user} = show_user_id |> Paperwork.Collections.User.show
-                        {:ok, struct(Paperwork.Collections.UserProfile, Map.take(user, [:id, :email, :name]))}
+                        {:ok, struct(Paperwork.Collections.UserProfile, Map.take(user, Paperwork.Collections.UserProfile.fields()))}
                     true ->
                         show_user_id |> Paperwork.Collections.User.show
                 end
