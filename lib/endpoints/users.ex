@@ -12,7 +12,11 @@ defmodule Paperwork.Users.Endpoints.Users do
                 :role_admin ->
                     Paperwork.Collections.User.list()
                 _ ->
-                    {:unauthorized, %{status: 0, content: %{error: "Not authorized to list all users"}}}
+                    {:ok, users} = Paperwork.Collections.User.list()
+                    {:ok,
+                        users
+                        |> Enum.map(fn user -> struct(Paperwork.Collections.UserProfile, Map.take(user, [:id, :email, :name])) end)
+                    }
             end
 
             conn
@@ -32,8 +36,11 @@ defmodule Paperwork.Users.Endpoints.Users do
                     |> Paperwork.Id.from_gid()
 
                 response = cond do
-                    session_user_id != show_user_id and session_user_role != :role_admin -> {:unauthorized, %{status: 0, content: %{error: "Not authorized to view other users"}}}
-                    true -> show_user_id |> Paperwork.Collections.User.show
+                    session_user_id != show_user_id and session_user_role != :role_admin ->
+                        {:ok, user} = show_user_id |> Paperwork.Collections.User.show
+                        {:ok, struct(Paperwork.Collections.UserProfile, Map.take(user, [:id, :email, :name]))}
+                    true ->
+                        show_user_id |> Paperwork.Collections.User.show
                 end
 
                 conn
