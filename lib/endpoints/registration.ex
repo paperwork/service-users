@@ -14,6 +14,7 @@ defmodule Paperwork.Users.Endpoints.Registration do
                 requires :first_name, type: String
                 requires :last_name, type: String
             end
+            optional :profile_photo, type: String
         end
         post do
             new_user = params

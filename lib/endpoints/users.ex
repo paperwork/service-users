@@ -55,6 +55,7 @@ defmodule Paperwork.Users.Endpoints.Users do
                     optional :first_name, type: String
                     optional :last_name, type: String
                 end
+                optional :profile_photo, type: String
             end
             put do
                 session_user_id =

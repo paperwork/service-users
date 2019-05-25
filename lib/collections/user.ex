@@ -12,6 +12,7 @@ defmodule Paperwork.Collections.User do
             first_name: String.t(),
             last_name: String.t()
         },
+        profile_photo: String.t() | nil,
         role: String.t(),
         created_at: DateTime.t(),
         updated_at: DateTime.t(),
@@ -25,6 +26,7 @@ defmodule Paperwork.Collections.User do
             first_name: "",
             last_name: ""
         },
+        profile_photo: nil,
         role: "",
         created_at: DateTime.utc_now(),
         updated_at: DateTime.utc_now(),

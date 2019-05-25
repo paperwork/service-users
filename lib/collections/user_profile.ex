@@ -10,7 +10,8 @@ defmodule Paperwork.Collections.UserProfile do
         name: %{
             first_name: String.t(),
             last_name: String.t()
-        }
+        },
+        profile_photo: String.t() | nil
     }
     defstruct \
         id: nil,
@@ -18,7 +19,8 @@ defmodule Paperwork.Collections.UserProfile do
         name: %{
             first_name: "",
             last_name: ""
-        }
+        },
+        profile_photo: nil
 
     use Paperwork.Collections
 end
