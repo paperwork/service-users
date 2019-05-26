@@ -8,14 +8,28 @@ defmodule Paperwork.Users.Endpoints.Users do
 
     namespace :users do
         get do
-            response = case conn |> Paperwork.Auth.Session.get_user_role do
+            session_user_id =
+                conn
+                |> Paperwork.Auth.Session.get_paperwork_id()
+
+            session_user_role =
+                conn
+                |> Paperwork.Auth.Session.get_user_role()
+
+            response = case session_user_role do
                 :role_admin ->
                     Paperwork.Collections.User.list()
                 _ ->
                     {:ok, users} = Paperwork.Collections.User.list()
                     {:ok,
                         users
-                        |> Enum.map(fn user -> struct(Paperwork.Collections.UserProfile, Map.take(user, Paperwork.Collections.UserProfile.fields())) end)
+                        |> Enum.map(fn user ->
+                            extended_user =
+                                user
+                                |> Map.put(:gid, "#{Map.get(user, :id) |> BSON.ObjectId.encode!()}@#{session_user_id.system_id}")
+
+                            struct(Paperwork.Collections.UserProfile, Map.take(extended_user, Paperwork.Collections.UserProfile.fields()))
+                        end)
                     }
             end
 
@@ -28,9 +42,11 @@ defmodule Paperwork.Users.Endpoints.Users do
                 session_user_id =
                     conn
                     |> Paperwork.Auth.Session.get_paperwork_id()
+
                 session_user_role =
                     conn
                     |> Paperwork.Auth.Session.get_user_role()
+
                 show_user_id =
                     params[:id]
                     |> Paperwork.Id.from_gid()
@@ -38,7 +54,12 @@ defmodule Paperwork.Users.Endpoints.Users do
                 response = cond do
                     session_user_id != show_user_id and session_user_role != :role_admin ->
                         {:ok, user} = show_user_id |> Paperwork.Collections.User.show
-                        {:ok, struct(Paperwork.Collections.UserProfile, Map.take(user, Paperwork.Collections.UserProfile.fields()))}
+
+                        extended_user =
+                            user
+                            |> Map.put(:gid, "#{Map.get(user, :id) |> BSON.ObjectId.encode!()}@#{session_user_id.system_id}")
+
+                        {:ok, struct(Paperwork.Collections.UserProfile, Map.take(extended_user, Paperwork.Collections.UserProfile.fields()))}
                     true ->
                         show_user_id |> Paperwork.Collections.User.show
                 end

@@ -6,6 +6,7 @@ defmodule Paperwork.Collections.UserProfile do
     @enforce_keys []
     @type t :: %__MODULE__{
         id: BSON.ObjectId.t() | nil,
+        gid: String.t(),
         email: String.t(),
         name: %{
             first_name: String.t(),
@@ -15,6 +16,7 @@ defmodule Paperwork.Collections.UserProfile do
     }
     defstruct \
         id: nil,
+        gid: "",
         email: "",
         name: %{
             first_name: "",
