@@ -12,7 +12,8 @@ defmodule Paperwork.Users.Application do
         children = [
             Paperwork.Ex,
             Paperwork.Users.Server,
-            {Mongo, [name: :mongo, url: Confex.fetch_env!(:paperwork, :mongodb)[:url], pool: DBConnection.Poolboy]}
+            {Mongo, [name: :mongo, url: Confex.fetch_env!(:paperwork, :mongodb)[:url], pool: DBConnection.Poolboy]},
+            Paperwork.Events.Publisher
         ]
 
         opts = [strategy: :one_for_one, name: Paperwork.Users.Supervisor]
