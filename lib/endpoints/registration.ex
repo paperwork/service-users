@@ -23,6 +23,13 @@ defmodule Paperwork.Users.Endpoints.Registration do
             with \
                 {:ok, created_user} <- struct(Paperwork.Collections.User, new_user) |> Paperwork.Collections.User.create(),
                 {:ok, jwt, _claims} <- Paperwork.Auth.Session.create(created_user) do
+
+                    new_user_id =
+                        Paperwork.Id.from_gid(created_user.id |> BSON.ObjectId.encode!())
+
+                    {:ok, created_user}
+                    |> Paperwork.Helpers.Journal.api_response_to_journal(params |> Map.put(:password, "CENSORED"), :create, :user, :user, new_user_id.gid, [new_user_id])
+
                     conn
                     |> put_resp_header("Authorization", "Bearer #{jwt}")
                     |> resp({:ok, %{token: jwt, user: created_user}})
