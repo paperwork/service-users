@@ -84,20 +84,48 @@ defmodule Paperwork.Collections.User do
 
     @spec update(model :: __MODULE__.t) :: {:ok, %__MODULE__{}} | {:error, String.t}
     def update(%__MODULE__{} = model) do
-        model
-        |> set_password_if_given
-        |> collection_update
+        updated_model =
+            Map.from_struct(model)
+            |> update()
+
+        struct(__MODULE__, updated_model)
+    end
+
+    @spec update(model :: Map.t) :: {:ok, %{}} | {:error, String.t}
+    def update(%{} = model) do
+        query = %{
+            id: model |> Map.get(:id)
+        }
+
+        changeset =
+            model
+            |> Map.delete(:id)
+            |> set_password_if_given
+
+        %{
+            "$set": changeset
+        }
+        |> collection_update_manually(query)
         |> strip_privates
     end
 
     @spec set_password_if_given(model :: __MODULE__.t) :: %__MODULE__{}
-    defp set_password_if_given(%__MODULE__{password: password} = model) when is_binary(password) do
+    defp set_password_if_given(%__MODULE__{} = model) do
+        updated_model =
+            Map.from_struct(model)
+            |> set_password_if_given
+
+        struct(__MODULE__, updated_model)
+    end
+
+    @spec set_password_if_given(model :: Map.t) :: %{}
+    defp set_password_if_given(%{password: password} = model) when is_binary(password) do
         model
         |> Map.put(:password, Bcrypt.hash_pwd_salt(password))
     end
 
-    @spec set_password_if_given(model :: __MODULE__.t) :: %__MODULE__{}
-    defp set_password_if_given(%__MODULE__{password: password} = model) when is_nil(password) do
+    @spec set_password_if_given(model :: Map.t) :: %{}
+    defp set_password_if_given(%{} = model) do
         model
     end
 end
