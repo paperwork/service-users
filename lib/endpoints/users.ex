@@ -97,7 +97,7 @@ defmodule Paperwork.Users.Endpoints.Users do
                     session_user_id != update_user_id and session_user_role != :role_admin ->
                         {:unauthorized, %{status: 0, content: %{error: "Not authorized to update other users"}}}
                     true ->
-                        struct(Paperwork.Collections.User, params)
+                        params
                             |> Map.put(:id, update_user_id.id)
                             |> Map.put(:updated_at, DateTime.utc_now())
                             |> Paperwork.Collections.User.update
