@@ -73,7 +73,7 @@ defmodule Paperwork.Users.Endpoints.Users do
             params do
                 optional :email, type: String
                 optional :password, type: String
-                group :name, type: Map do
+                optional :name, type: Map do
                     optional :first_name, type: String
                     optional :last_name, type: String
                 end
