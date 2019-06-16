@@ -17,7 +17,7 @@
 		{
 			"elixir":
 			{
-				"enabled": true
+				"enabled": false
 			}
 		}
 	}
