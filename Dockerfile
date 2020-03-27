@@ -34,7 +34,7 @@ RUN mix do deps.get, deps.compile, compile
 
 RUN \
   mkdir -p /opt/built && \
-  mix release --verbose && \
+  mix release && \
   cp _build/${MIX_ENV}/rel/${APP_NAME}/releases/${APP_VSN}/${APP_NAME}.tar.gz /opt/built && \
   cd /opt/built && \
   tar -xzf ${APP_NAME}.tar.gz && \
