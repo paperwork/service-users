@@ -9,7 +9,7 @@
 # ║                                                                            ║
 # ╚════════════════════════════════════════════════════════════════════════════╝
 ARG ALPINE_VERSION=3.9
-FROM elixir:1.8-alpine AS builder
+FROM elixir:1.10-alpine AS builder
 
 ARG APP_NAME
 ARG APP_VSN
