@@ -3,7 +3,8 @@ deps/
 .git/
 .gitignore
 .editorconfig
-*.sublime-project
+*.sublime-*
+.DS_Store
 Dockerfile
 Makefile
 README*
